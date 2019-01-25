@@ -21,7 +21,7 @@ namespace Garage20MvcCore22.Controllers
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
-            ParkedVehicle parkedVehicle = new ParkedVehicle();
+            //ParkedVehicle parkedVehicle = new ParkedVehicle();
             return View(await _context.ParkedVehicle.ToListAsync());
             //return View();
         }
@@ -29,6 +29,11 @@ namespace Garage20MvcCore22.Controllers
         public async Task<IActionResult> AllVehicles()
         {
             return View(await _context.ParkedVehicle.ToListAsync());
+        }
+
+        public async Task<IActionResult> ParkedVehicles()
+        {
+            return View(await _context.ParkedVehicle.Where(p => p.Parked == true).ToListAsync());
         }
 
         // GET: ParkedVehicles/Details/5
@@ -50,7 +55,7 @@ namespace Garage20MvcCore22.Controllers
         }
 
         // GET: ParkedVehicles/Create
-        public IActionResult Create()
+        public IActionResult CheckIn()
         {
             return View();
         }
@@ -60,10 +65,12 @@ namespace Garage20MvcCore22.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VehicleType,RegNr,NrOfWheels,Color,Model,Brand")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> CheckIn([Bind("Id,VehicleType,RegNr,NrOfWheels,Color,Model,Brand,StartTime,Parked")] ParkedVehicle parkedVehicle)
         {
             if (ModelState.IsValid)
             {
+                parkedVehicle.StartTime = DateTime.Now;
+                parkedVehicle.Parked = true;
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
