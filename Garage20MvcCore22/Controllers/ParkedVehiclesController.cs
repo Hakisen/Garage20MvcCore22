@@ -21,6 +21,13 @@ namespace Garage20MvcCore22.Controllers
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
+            ParkedVehicle parkedVehicle = new ParkedVehicle();
+            return View(await _context.ParkedVehicle.ToListAsync());
+            //return View();
+        }
+
+        public async Task<IActionResult> AllVehicles()
+        {
             return View(await _context.ParkedVehicle.ToListAsync());
         }
 
