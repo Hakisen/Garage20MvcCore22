@@ -1,22 +1,25 @@
 ﻿@model Garage20MvcCore22.Models.ParkedVehicle
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "View";
 }
 
-<h1>Edit</h1>
+<h1>View</h1>
 
 <h4>ParkedVehicle</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="View">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="VehicleType" class="control-label"></label>
-                @*<select asp-for="VehicleType" class="form-control"></select>*@
-                <select asp-for="VehicleType" asp-items="Html.GetEnumSelectList(typeof (VehicleType))"></select>
+                <input asp-for="VehicleType" class="form-control" />
                 <span asp-validation-for="VehicleType" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -43,6 +46,16 @@
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Parked" /> @Html.DisplayNameFor(model => model.Parked)
+                </label>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
