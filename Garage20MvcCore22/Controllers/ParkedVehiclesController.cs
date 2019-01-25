@@ -33,10 +33,6 @@ namespace Garage20MvcCore22.Controllers
 
 
 
-        public async Task<IActionResult> AllVehicles()
-        {
-            return View(await _context.ParkedVehicle.ToListAsync());
-        }
         // GET: ParkedVehicles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
