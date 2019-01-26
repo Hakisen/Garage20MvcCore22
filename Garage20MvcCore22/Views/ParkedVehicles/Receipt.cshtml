@@ -1,0 +1,37 @@
+﻿@model Garage20MvcCore22.ViewModels.Kvitto
+@{
+}
+<h1>Receipt for:@Model.RegNr</h1>
+
+<hr />
+<dl class="row">
+
+
+    <dt class="col-sm-4">
+        Start Time:
+    </dt>
+    <dd class="col-sm-8">
+        @Model.StartTime
+    </dd>
+
+    <dt class="col-sm-4">
+        Departure Time:
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model=>model.EndTime)
+    </dd>
+
+    <dt class="col-sm-4">
+        Duration:
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Duration)
+    </dd>
+
+    <dt class="col-sm-4">
+        Total Price:
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.TotalPrice)
+    </dd>
+</dl>
