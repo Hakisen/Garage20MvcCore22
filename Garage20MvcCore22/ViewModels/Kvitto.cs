@@ -3,7 +3,7 @@ namespace Garage20MvcCore22.ViewModels
 {
     public class Kvitto
     {
-        public int RegNr
+        public string RegNr
         {
             get;
             set;

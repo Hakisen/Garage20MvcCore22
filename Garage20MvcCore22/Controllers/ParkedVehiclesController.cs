@@ -117,6 +117,7 @@ namespace Garage20MvcCore22.Controllers
             exitvehicle.Parked = false;
           
             var kvitto = new Kvitto();
+            kvitto.RegNr = exitvehicle.RegNr;
             kvitto.StartTime = exitvehicle.StartTime;
             kvitto.EndTime = DateTime.Now;
             var between = kvitto.EndTime.Subtract(kvitto.StartTime);
