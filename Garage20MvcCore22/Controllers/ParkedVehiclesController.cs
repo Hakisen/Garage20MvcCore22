@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage20MvcCore22.Models;
+using Garage20MvcCore22.ViewModels;
 
 namespace Garage20MvcCore22.Controllers
 {
@@ -69,15 +70,65 @@ namespace Garage20MvcCore22.Controllers
         {
             if (ModelState.IsValid)
             {
+               
                 parkedVehicle.StartTime = DateTime.Now;
                 parkedVehicle.Parked = true;
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = "CheckIn Is Done Successfully!";
+               return RedirectToAction(nameof(Index));
             }
+            else{
+                TempData["Failure"] = "CheckIn Can not be Done!";
+
+            }
+           
             return View(parkedVehicle);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CheckOut(int? id)
+        {
+            if (id == null)
+            {
+                return View(nameof(ParkedVehicle));
+            }
+            var model = await _context.ParkedVehicle
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            if (model.Parked == false)
+            {
+                RedirectToAction(nameof(ParkedVehicle));
+            }
+            return View(model);
+        }
+
+        public ActionResult Receipt(int? id)
+        {
+            if(id==null){
+                return NotFound();
+            }
+        
+            var exitvehicle = _context.ParkedVehicle.FirstOrDefault(v => v.Id == id);
+            if(exitvehicle==null){
+                return NotFound();
+            }
+            exitvehicle.Parked = false;
+          
+            var kvitto = new Kvitto();
+            kvitto.StartTime = exitvehicle.StartTime;
+            kvitto.EndTime = DateTime.Now;
+            var between = kvitto.EndTime.Subtract(kvitto.StartTime);
+            kvitto.Duration=string.Format("{0} dagar,{1} timmar,{2} minuter", between.Days, between.Hours, between.Minutes);
+            kvitto.TotalPrice = Math.Floor(between.TotalMinutes * 0.7);
+
+            _context.SaveChangesAsync();
+
+            return View(kvitto);
+        }
+
+     
         // GET: ParkedVehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -103,20 +154,28 @@ namespace Garage20MvcCore22.Controllers
         {
             if (id != parkedVehicle.Id)
             {
+                TempData["Failure"]="Vehicle With This Id Does Not Exist!";
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var editVehicle = _context.ParkedVehicle.AsNoTracking().FirstOrDefault(v => v.Id == id);
+                parkedVehicle.Parked = editVehicle.Parked;
+                parkedVehicle.StartTime = editVehicle.StartTime;
                 try
                 {
+                  
                     _context.Update(parkedVehicle);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Edit IS Done Successfully!";
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ParkedVehicleExists(parkedVehicle.Id))
                     {
+                        TempData["Failure"] = "Update Could Not Be Done!";
                         return NotFound();
                     }
                     else
@@ -124,7 +183,11 @@ namespace Garage20MvcCore22.Controllers
                         throw;
                     }
                 }
+
+              
                 return RedirectToAction(nameof(Index));
+            }else{
+                TempData["Failure"] = "Edit Could not be Done!";
             }
             return View(parkedVehicle);
         }
@@ -141,9 +204,11 @@ namespace Garage20MvcCore22.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkedVehicle == null)
             {
+               
                 return NotFound();
             }
 
+    
             return View(parkedVehicle);
         }
 
@@ -155,6 +220,7 @@ namespace Garage20MvcCore22.Controllers
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             _context.ParkedVehicle.Remove(parkedVehicle);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Vehicle Removed From DataBase Successfully!";
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,13 +1,16 @@
 ﻿@model Garage20MvcCore22.Models.ParkedVehicle
-
 @{
     ViewData["Title"] = "Edit";
 }
-
 <h1>Edit</h1>
-
 <h4>ParkedVehicle</h4>
 <hr />
+<p style="color:green">
+    @TempData["Success"]
+</p>
+<p class="text-danger">
+    @TempData["Failure"]
+</p>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -50,11 +53,9 @@
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
