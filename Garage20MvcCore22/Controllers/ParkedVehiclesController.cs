@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,10 +27,10 @@ namespace Garage20MvcCore22.Controllers
             //return View();
         }
 
-        public async Task<IActionResult> AllVehicles()
-        {
-            return View(await _context.ParkedVehicle.ToListAsync());
-        }
+        //public async Task<IActionResult> AllVehicles()
+        //{
+        //    return View(await _context.ParkedVehicle.ToListAsync());
+        //}
 
         public async Task<IActionResult> ParkedVehicles()
         {
@@ -129,7 +129,76 @@ namespace Garage20MvcCore22.Controllers
             return View(kvitto);
         }
 
-     
+
+        public ActionResult AllVehicles(string sortOrder, string SearchString)
+        {
+            ViewBag.RegSortParm = String.IsNullOrEmpty(sortOrder) ? "RegNr_desc" : "";
+            ViewBag.VTypeSortParm = sortOrder == "VehicleType" ? "VehicleType_desc" : "VehicleType";
+            ViewBag.ModelSortParm = sortOrder == "Model" ? "Model_desc" : "Model";
+            ViewBag.NRWheelSortParm = sortOrder == "NrOfWheels" ? "NrOfWheels_desc" : "NrOfWheels";
+            ViewBag.ColorSortParm = sortOrder == "Color" ? "Color_desc" : "Color";
+            ViewBag.BrandSortParm = sortOrder == "Brand" ? "Brand_desc" : "Brand";
+            ViewBag.StartTimeSortParm = sortOrder == "StartTime" ? "StartTime_desc" : "StartTime";
+
+            var vehicles = from v in _context.ParkedVehicle select v;
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                vehicles = vehicles.Where(s => s.RegNr==SearchString);
+                //return RedirectToAction("Details",vehicles);
+                                        
+            }
+
+
+            switch (sortOrder)
+            {
+                case "RegNr_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.RegNr);
+                    break;
+                case "VehicleType":
+                    vehicles = vehicles.OrderBy(s => s.VehicleType);
+                    break;
+                case "VehicleType_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.VehicleType);
+                    break;
+                case "Model":
+                    vehicles = vehicles.OrderBy(s => s.Model);
+                    break;
+                case "Model_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.NrOfWheels);
+                    break;
+                case "NrOfWheels":
+                    vehicles = vehicles.OrderBy(s => s.NrOfWheels);
+                    break;
+                case "NrOfWheels_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Model);
+                    break;
+                case "Color":
+                    vehicles = vehicles.OrderBy(s => s.Color);
+                    break;
+                case "Color_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Color);
+                    break;
+                case "Brand":
+                    vehicles = vehicles.OrderBy(s => s.Brand);
+                    break;
+                case "Brand_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Brand);
+                    break;
+                case "StartTime":
+                    vehicles = vehicles.OrderBy(s => s.StartTime);
+                    break;
+                case "StartTime_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.StartTime);
+                    break;
+
+                default:
+                    vehicles = vehicles.OrderBy(s => s.RegNr);
+                    break;
+            }
+            return View(vehicles.ToList());
+        }
+
         // GET: ParkedVehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
