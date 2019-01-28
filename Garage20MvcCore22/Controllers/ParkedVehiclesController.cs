@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage20MvcCore22.Models;
+using Garage20MvcCore22.ViewModels;
 
 namespace Garage20MvcCore22.Controllers
 {
@@ -26,10 +27,10 @@ namespace Garage20MvcCore22.Controllers
             //return View();
         }
 
-        public async Task<IActionResult> AllVehicles()
-        {
-            return View(await _context.ParkedVehicle.ToListAsync());
-        }
+        //public async Task<IActionResult> AllVehicles()
+        //{
+        //    return View(await _context.ParkedVehicle.ToListAsync());
+        //}
 
         public async Task<IActionResult> ParkedVehicles()
         {
@@ -69,13 +70,133 @@ namespace Garage20MvcCore22.Controllers
         {
             if (ModelState.IsValid)
             {
+               
                 parkedVehicle.StartTime = DateTime.Now;
                 parkedVehicle.Parked = true;
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = "CheckIn Is Done Successfully!";
+               return RedirectToAction(nameof(Index));
             }
+            else{
+                TempData["Failure"] = "CheckIn Can not be Done!";
+
+            }
+           
             return View(parkedVehicle);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckOut(int? id)
+        {
+            if (id == null)
+            {
+                return View(nameof(ParkedVehicle));
+            }
+            var model = await _context.ParkedVehicle
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            if (model.Parked == false)
+            {
+                RedirectToAction(nameof(ParkedVehicle));
+            }
+            return View(model);
+        }
+
+        public ActionResult Receipt(int? id)
+        {
+            if(id==null){
+                return NotFound();
+            }
+        
+            var exitvehicle = _context.ParkedVehicle.FirstOrDefault(v => v.Id == id);
+            if(exitvehicle==null){
+                return NotFound();
+            }
+            exitvehicle.Parked = false;
+          
+            var kvitto = new Kvitto();
+            kvitto.RegNr = exitvehicle.RegNr;
+            kvitto.StartTime = exitvehicle.StartTime;
+            kvitto.EndTime = DateTime.Now;
+            var between = kvitto.EndTime.Subtract(kvitto.StartTime);
+            kvitto.Duration=string.Format("{0} dagar,{1} timmar,{2} minuter", between.Days, between.Hours, between.Minutes);
+            kvitto.TotalPrice = Math.Floor(between.TotalMinutes * 0.7);
+
+            _context.SaveChangesAsync();
+
+            return View(kvitto);
+        }
+
+
+        public ActionResult AllVehicles(string sortOrder, string SearchString)
+        {
+            ViewBag.RegSortParm = String.IsNullOrEmpty(sortOrder) ? "RegNr_desc" : "";
+            ViewBag.VTypeSortParm = sortOrder == "VehicleType" ? "VehicleType_desc" : "VehicleType";
+            ViewBag.ModelSortParm = sortOrder == "Model" ? "Model_desc" : "Model";
+            ViewBag.NRWheelSortParm = sortOrder == "NrOfWheels" ? "NrOfWheels_desc" : "NrOfWheels";
+            ViewBag.ColorSortParm = sortOrder == "Color" ? "Color_desc" : "Color";
+            ViewBag.BrandSortParm = sortOrder == "Brand" ? "Brand_desc" : "Brand";
+            ViewBag.StartTimeSortParm = sortOrder == "StartTime" ? "StartTime_desc" : "StartTime";
+
+            var vehicles = from v in _context.ParkedVehicle select v;
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                vehicles = vehicles.Where(s => s.RegNr==SearchString);
+                //return RedirectToAction("Details",vehicles);
+                                        
+            }
+
+
+            switch (sortOrder)
+            {
+                case "RegNr_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.RegNr);
+                    break;
+                case "VehicleType":
+                    vehicles = vehicles.OrderBy(s => s.VehicleType);
+                    break;
+                case "VehicleType_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.VehicleType);
+                    break;
+                case "Model":
+                    vehicles = vehicles.OrderBy(s => s.Model);
+                    break;
+                case "Model_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.NrOfWheels);
+                    break;
+                case "NrOfWheels":
+                    vehicles = vehicles.OrderBy(s => s.NrOfWheels);
+                    break;
+                case "NrOfWheels_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Model);
+                    break;
+                case "Color":
+                    vehicles = vehicles.OrderBy(s => s.Color);
+                    break;
+                case "Color_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Color);
+                    break;
+                case "Brand":
+                    vehicles = vehicles.OrderBy(s => s.Brand);
+                    break;
+                case "Brand_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.Brand);
+                    break;
+                case "StartTime":
+                    vehicles = vehicles.OrderBy(s => s.StartTime);
+                    break;
+                case "StartTime_desc":
+                    vehicles = vehicles.OrderByDescending(s => s.StartTime);
+                    break;
+
+                default:
+                    vehicles = vehicles.OrderBy(s => s.RegNr);
+                    break;
+            }
+            return View(vehicles.ToList());
         }
 
         // GET: ParkedVehicles/Edit/5
@@ -103,20 +224,28 @@ namespace Garage20MvcCore22.Controllers
         {
             if (id != parkedVehicle.Id)
             {
+                TempData["Failure"]="Vehicle With This Id Does Not Exist!";
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var editVehicle = _context.ParkedVehicle.AsNoTracking().FirstOrDefault(v => v.Id == id);
+                parkedVehicle.Parked = editVehicle.Parked;
+                parkedVehicle.StartTime = editVehicle.StartTime;
                 try
                 {
+                  
                     _context.Update(parkedVehicle);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Edit IS Done Successfully!";
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ParkedVehicleExists(parkedVehicle.Id))
                     {
+                        TempData["Failure"] = "Update Could Not Be Done!";
                         return NotFound();
                     }
                     else
@@ -124,7 +253,11 @@ namespace Garage20MvcCore22.Controllers
                         throw;
                     }
                 }
+
+              
                 return RedirectToAction(nameof(Index));
+            }else{
+                TempData["Failure"] = "Edit Could not be Done!";
             }
             return View(parkedVehicle);
         }
@@ -141,9 +274,11 @@ namespace Garage20MvcCore22.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkedVehicle == null)
             {
+               
                 return NotFound();
             }
 
+    
             return View(parkedVehicle);
         }
 
@@ -155,6 +290,7 @@ namespace Garage20MvcCore22.Controllers
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             _context.ParkedVehicle.Remove(parkedVehicle);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Vehicle Removed From DataBase Successfully!";
             return RedirectToAction(nameof(Index));
         }
 
