@@ -162,5 +162,23 @@ namespace Garage20MvcCore22.Controllers
         {
             return _context.ParkedVehicle.Any(e => e.Id == id);
         }
+
+        // GET: ParkedVehicles/Details/5
+        public async Task<IActionResult> Receipt(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parkedVehicle = await _context.ParkedVehicle
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (parkedVehicle == null)
+            {
+                return NotFound();
+            }
+
+            return View(parkedVehicle);
+        }
     }
 }

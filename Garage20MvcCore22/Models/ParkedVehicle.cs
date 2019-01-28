@@ -18,7 +18,7 @@ namespace Garage20MvcCore22.Models
         public string Color { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
-        [Display(Name = "Start Time")]
+        [Display(Name = "Check In")]
         [DataType(DataType.DateTime)]
         public DateTime StartTime { get; set; }
         public bool Parked { get; set; }
