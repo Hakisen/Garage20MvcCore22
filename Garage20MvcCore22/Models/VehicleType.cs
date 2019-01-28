@@ -2,9 +2,9 @@
 {
     public enum VehicleType
     {
-        Car,
-        Bus,
         Bicycle,
+        Bus,
+        Car,
         Motorcycle,
         PickupTruck,
         WheelChair
