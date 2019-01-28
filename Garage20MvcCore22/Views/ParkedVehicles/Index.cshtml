@@ -1,24 +1,22 @@
 ﻿@model IEnumerable<Garage20MvcCore22.Models.ParkedVehicle>
-
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1>Index</h1>
-
 <p>
     <a asp-action="CheckIn">Park Vehicle</a>
 </p>
-
 @*@model Enum*@
 @*@Html.DropDownListFor(m => m, Html.GetEnumSelectList(Model.GetType()))*@
-
 @*@Html.DropDownListFor(m => m, Html.GetEnumSelectList(typeof(enum)))*@
-
 @*@Html.GetEnumSelectList(Enum.GetValues(VehicleType)*@
 
-
-
+<p style="color:green">
+    @TempData["Success"]
+</p>
+<p class="text-danger">
+    @TempData["Failure"]
+</p>
 <table class="table">
     <thead>
         <tr>
