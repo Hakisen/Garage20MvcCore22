@@ -1,10 +1,10 @@
 ﻿namespace Garage20MvcCore22.Models
 {
-    public enum VehicleType
+    public enum VehicleType:int
     {
-        Car,
-        Bus,
         Bicycle,
+        Bus,
+        Car,
         Motorcycle,
         PickupTruck,
         WheelChair

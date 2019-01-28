@@ -70,7 +70,6 @@ namespace Garage20MvcCore22.Controllers
         {
             if (ModelState.IsValid)
             {
-               
                 parkedVehicle.StartTime = DateTime.Now;
                 parkedVehicle.Parked = true;
                 _context.Add(parkedVehicle);
@@ -144,7 +143,7 @@ namespace Garage20MvcCore22.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                vehicles = vehicles.Where(s => s.RegNr==SearchString);
+                vehicles = vehicles.Where(s => s.RegNr.Contains(SearchString));
                 //return RedirectToAction("Details",vehicles);
                                         
             }
