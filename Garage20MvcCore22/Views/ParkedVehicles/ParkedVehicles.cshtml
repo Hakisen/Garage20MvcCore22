@@ -5,33 +5,48 @@
 }
 
 <h1>Parked Vehicles</h1>
-
 <p>
     <a asp-action="CheckIn">Check In</a>
 </p>
+
+@using (Html.BeginForm())
+{
+    <p>
+        Search By: @Html.TextBox("SearchString")
+        <input type="submit" value="Search" />
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.VehicleType)
+                @Html.ActionLink("Vehicle Type", "AllVehicles", new { sortOrder = ViewBag.VTypeSortParm })
+                @*@Html.DisplayNameFor(model => model.VehicleType)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RegNr)
+                @Html.ActionLink("Register Number", "AllVehicles", new { sortOrder = ViewBag.RegSortParm })
+                @*@Html.DisplayNameFor(model => model.RegNr)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NrOfWheels)
+                @Html.ActionLink("Number Of Wheels", "AllVehicles", new { sortOrder = ViewBag.NRWheelSortParm })
+                @*@Html.DisplayNameFor(model => model.NrOfWheels)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Color)
+                @Html.ActionLink("Color", "AllVehicles", new { sortOrder = ViewBag.ColorSortParm })
+                @*@Html.DisplayNameFor(model => model.Color)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Model)
+                @Html.ActionLink("Model", "AllVehicles", new { sortOrder = ViewBag.ModelSortParm })
+                @*@Html.DisplayNameFor(model => model.Model)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Brand)
+                @Html.ActionLink("Brand", "AllVehicles", new { sortOrder = ViewBag.BrandSortParm })
+                @*@Html.DisplayNameFor(model => model.Brand)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartTime)
+                @Html.ActionLink("Start Time", "AllVehicles", new { sortOrder = ViewBag.StartTimeSortParm })
+                @*@Html.DisplayNameFor(model => model.StartTime)*@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Parked)
@@ -40,39 +55,38 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.VehicleType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegNr)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NrOfWheels)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Color)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Parked)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="CheckOut" asp-route-id="@item.Id">Check Out</a>
-                <a asp-action="Receipt" asp-route-id="@item.Id">Receipt</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleType)
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegNr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NrOfWheels)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Parked)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="CheckOut" asp-route-id="@item.Id">CheckOut</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

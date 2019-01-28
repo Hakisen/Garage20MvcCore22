@@ -11,7 +11,7 @@ namespace Garage20MvcCore22.Models
         public int Id { get; set; }
         public VehicleType VehicleType { get; set; }
         [Required]
-        [Display(Name = "Registration Number")]
+        [Display(Name = "Reg.No")]
         public string RegNr { get; set; }
         [Display(Name = "Nr Of Wheels")]
         public int NrOfWheels { get; set; }
