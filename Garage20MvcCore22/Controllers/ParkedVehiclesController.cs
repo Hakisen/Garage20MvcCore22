@@ -142,6 +142,8 @@ namespace Garage20MvcCore22.Controllers
 
             var vehicles = from v in _context.ParkedVehicle select v;
 
+            
+
             if (!String.IsNullOrEmpty(SearchString))
             {
                 vehicles = vehicles.Where(s => s.RegNr==SearchString);
@@ -197,6 +199,11 @@ namespace Garage20MvcCore22.Controllers
                     break;
             }
             return View(vehicles.ToList());
+        }
+
+        private string ToUpper(string searchString)
+        {
+            throw new NotImplementedException();
         }
 
         // GET: ParkedVehicles/Edit/5
