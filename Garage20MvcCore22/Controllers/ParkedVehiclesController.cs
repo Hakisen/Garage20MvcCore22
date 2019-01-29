@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage20MvcCore22.Models;
 using Garage20MvcCore22.ViewModels;
+using System.IO;
 
 namespace Garage20MvcCore22.Controllers
 {
@@ -76,7 +77,7 @@ namespace Garage20MvcCore22.Controllers
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "CheckIn Is Done Successfully!";
-               return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
             else{
                 TempData["Failure"] = "CheckIn Can not be Done!";
@@ -305,5 +306,7 @@ namespace Garage20MvcCore22.Controllers
         {
             return _context.ParkedVehicle.Any(e => e.Id == id);
         }
+
+        
     }
 }
