@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage20MvcCore22.Models;
 using Garage20MvcCore22.ViewModels;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Garage20MvcCore22.Controllers
 {
@@ -182,7 +187,7 @@ namespace Garage20MvcCore22.Controllers
             if(exitvehicle==null){
                 return NotFound();
             }
-            exitvehicle.Parked = false;
+            //exitvehicle.Parked = false;
           
             var kvitto = new Kvitto();
             kvitto.RegNr = exitvehicle.RegNr;
@@ -193,6 +198,31 @@ namespace Garage20MvcCore22.Controllers
             kvitto.TotalPrice = Math.Floor(between.TotalMinutes * 0.7 );
 
             _context.SaveChangesAsync();
+
+            string ReceiptsData = kvitto.EndTime.Year.ToString() + "_" 
+                + (kvitto.EndTime.Month < 10 ? "0" : "") + kvitto.EndTime.Month.ToString() + "_" 
+                + kvitto.EndTime.Day.ToString() + "_" 
+                + kvitto.EndTime.Hour.ToString() + "_" 
+                + kvitto.EndTime.Minute.ToString() + "_"+ 
+                kvitto.RegNr.ToString();
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//ReceiptsData.dat";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            formatter.Serialize(stream, kvitto);
+            stream.Close();
+
+            //Not working
+            //JsonSerializer serializer = new JsonSerializer();
+            //serializer.Converters.Add(new JavaScriptDateTimeConverter());
+            //serializer.NullValueHandling = NullValueHandling.Ignore;
+            //Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            //using (StreamWriter sw = new StreamWriter(path))
+            //using (JsonWriter writer = new JsonTextWriter(sw))
+            //{
+            //    serializer.Serialize(writer, kvitto);
+            //}
+
 
             return View(kvitto);
         }
