@@ -213,8 +213,8 @@ namespace Garage20MvcCore22.Controllers
             //var path = $"~/Receipts/";  //NO!
             //var path = $"C:/Users/HakanK/source/repos/Garage20MvcCore22/Garage20MvcCore22/Receipts/"; NO!
 
-            var webRootPath = _hostingEnvironment.WebRootPath;
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            var webRootPath = _hostingEnvironment.WebRootPath;  //using IHostingEnvironment dep. injection
+            //var contentRootPath = _hostingEnvironment.ContentRootPath;  //gives the actual path on the server
             //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
             var path = webRootPath + $"/Receipts/" + $"/{ReceiptsData}.dat";
 
@@ -241,18 +241,39 @@ namespace Garage20MvcCore22.Controllers
         {
             //show all files with receipts
             var webRootPath = _hostingEnvironment.WebRootPath;
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
+            //var contentRootPath = _hostingEnvironment.ContentRootPath;
             var path = webRootPath + $"/Receipts/";
 
+            //List<string> list = Directory.GetFiles(path).Select(p => p.Remove(2, 2)).ToList(); //OK!
+            //IEnumerable<string> fileList = array.ToList().Select(p => p.Remove(1, 2));
+            //IEnumerable<string> fileList2 = fileList.Select(p => p.Remove(1, 2));
+            //fileList = fileList.ToList();
             //Here we read and display all files. Use Async!
 
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
             return View();
         }
 
+        public ActionResult ReceiptDetails(string fileName)
+        {
+            if (fileName == null)
+            {
+                return NotFound();
+            }
+
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var path = webRootPath + $"/Receipts/";
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(path + $"fileName", FileMode.Open, FileAccess.Read);
+            Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
+
+            if (kvitto == null)
+            {
+                return NotFound();
+            }
+
+            return View(kvitto);
+        }
 
         public ActionResult AllVehicles(string sortOrder, string SearchString)
         {

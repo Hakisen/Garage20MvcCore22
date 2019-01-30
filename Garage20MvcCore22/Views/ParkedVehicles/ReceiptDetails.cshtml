@@ -1,0 +1,47 @@
+﻿@model Garage20MvcCore22.ViewModels.Kvitto
+@{
+    ViewData["Title"] = "ReceiptDetails";
+}
+
+<h1>Receipt Details</h1>
+
+<div>
+    <h4>Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.RegNr)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.RegNr)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Duration)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Duration)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+    </dl>
+</div>
+<div>
+    @*<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |*@
+    <a asp-action="Receipts">Back to Receipt List</a>
+</div>
