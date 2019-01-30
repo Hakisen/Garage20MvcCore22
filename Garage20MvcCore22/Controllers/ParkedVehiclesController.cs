@@ -10,6 +10,7 @@ using Garage20MvcCore22.ViewModels;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 //using System.Web;
@@ -36,12 +37,7 @@ namespace Garage20MvcCore22.Controllers
             //return View();
         }
 
-        //public async Task<IActionResult> AllVehicles()
-        //{
-        //    return View(await _context.ParkedVehicle.ToListAsync());
-        //}
-
-        public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
+       public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
         {
             var parkedVehicles = await _context.ParkedVehicle.Where(p => p.Parked == true).ToListAsync();
 
@@ -209,37 +205,21 @@ namespace Garage20MvcCore22.Controllers
                 + kvitto.EndTime.Hour.ToString() + "_" 
                 + kvitto.EndTime.Minute.ToString() + "_"+ 
                 kvitto.RegNr.ToString();
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//ReceiptsData.dat"; NO!
-            //var path = $"~/Receipts/";  //NO!
-            //var path = $"C:/Users/HakanK/source/repos/Garage20MvcCore22/Garage20MvcCore22/Receipts/"; NO!
-
+       
             var webRootPath = _hostingEnvironment.WebRootPath;
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            var contentRootPath = _hostingEnvironment.ContentRootPath; // Not used (HK/MK)
             string receiptsfolder = "\\Receipts";
             if(!Directory.Exists(webRootPath + receiptsfolder))
             {
                 Directory.CreateDirectory(webRootPath + receiptsfolder);
             }
 
-            
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
             var path = webRootPath + $"/Receipts/" + $"/{ReceiptsData}.dat";
 
             IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
             formatter.Serialize(stream, kvitto);
             stream.Close();
-
-            //Not working, why?
-            //JsonSerializer serializer = new JsonSerializer();
-            //serializer.Converters.Add(new JavaScriptDateTimeConverter());
-            //serializer.NullValueHandling = NullValueHandling.Ignore;
-            //Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            //using (StreamWriter sw = new StreamWriter(path))
-            //using (JsonWriter writer = new JsonTextWriter(sw))
-            //{
-            //    serializer.Serialize(writer, kvitto);
-            //}
 
             return View(kvitto);
         }
@@ -249,17 +229,15 @@ namespace Garage20MvcCore22.Controllers
             //show all files with receipts
             var webRootPath = _hostingEnvironment.WebRootPath;
             var contentRootPath = _hostingEnvironment.ContentRootPath;
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
-            var path = webRootPath + $"/Receipts/";
+            var receiptsPath = webRootPath + $"/Receipts/";
+            int lngth = receiptsPath.Length;
 
-            //Here we read and display all files. Use Async!
+            List<string> filesList = Directory.GetFiles(receiptsPath).Select(p => p.Remove(0, lngth)).ToList();
 
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
-            return View();
+            ViewBag.Message = "Receipts";
+
+            return View(filesList);
         }
-
 
         public ActionResult AllVehicles(string sortOrder, string SearchString)
         {
@@ -278,7 +256,7 @@ namespace Garage20MvcCore22.Controllers
                 SearchString = SearchString.ToUpper();
 
                 vehicles = vehicles.Where(s => s.RegNr.Contains(SearchString) || s.VehicleType.ToString().ToUpper().Contains(SearchString) || s.NrOfWheels.ToString().ToUpper().Contains(SearchString) || s.Color.ToUpper().Contains(SearchString) || s.Model.ToUpper().Contains(SearchString) || s.Brand.ToUpper().Contains(SearchString) || s.StartTime.ToString().Contains(SearchString));
-                //return RedirectToAction("Details",vehicles);
+            
             }
 
 
