@@ -11,14 +11,14 @@ namespace Garage20MvcCore22.Models
         public int Id { get; set; }
         public VehicleType VehicleType { get; set; }
         [Required]
-        [Display(Name = "Registration Number")]
+        [Display(Name = "Reg.No")]
         public string RegNr { get; set; }
-        [Display(Name = "Nr Of Wheels")]
+        [Display(Name = "Nr. Wheels")]
         public int NrOfWheels { get; set; }
         public string Color { get; set; }
         public string Model { get; set; }
         public string Brand { get; set; }
-        [Display(Name = "Check In")]
+        [Display(Name = "Arrival")]
         [DataType(DataType.DateTime)]
         public DateTime StartTime { get; set; }
         public bool Parked { get; set; }

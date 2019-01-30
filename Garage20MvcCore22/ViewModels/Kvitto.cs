@@ -1,6 +1,7 @@
 ﻿using System;
 namespace Garage20MvcCore22.ViewModels
 {
+    [Serializable]
     public class Kvitto
     {
         public string RegNr
