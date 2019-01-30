@@ -223,8 +223,13 @@ namespace Garage20MvcCore22.Controllers
             //    serializer.Serialize(writer, kvitto);
             //}
 
-
             return View(kvitto);
+        }
+
+        public async Task<IActionResult> ShowReceipts()
+        {
+            //kod visa alla filer med kvitton
+            return View();
         }
 
 
