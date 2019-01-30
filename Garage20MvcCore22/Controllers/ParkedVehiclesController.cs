@@ -215,6 +215,13 @@ namespace Garage20MvcCore22.Controllers
 
             var webRootPath = _hostingEnvironment.WebRootPath;
             var contentRootPath = _hostingEnvironment.ContentRootPath;
+            string receiptsfolder = "\\Receipts";
+            if(!Directory.Exists(webRootPath + receiptsfolder))
+            {
+                Directory.CreateDirectory(webRootPath + receiptsfolder);
+            }
+
+            
             //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
             var path = webRootPath + $"/Receipts/" + $"/{ReceiptsData}.dat";
 
