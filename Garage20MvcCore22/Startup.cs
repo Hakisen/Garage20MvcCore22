@@ -38,6 +38,8 @@ namespace Garage20MvcCore22
 
             services.AddDbContext<Garage20MvcCore22Context>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("Garage20MvcCore22Context")));
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

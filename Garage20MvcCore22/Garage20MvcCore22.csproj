@@ -15,7 +15,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Receipts\" />
+    <Folder Include="wwwroot\Receipts\" />
   </ItemGroup>
 
 </Project>

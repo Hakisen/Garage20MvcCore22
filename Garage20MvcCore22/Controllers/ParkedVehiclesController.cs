@@ -12,16 +12,20 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+//using System.Web;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Garage20MvcCore22.Controllers
 {
     public class ParkedVehiclesController : Controller
     {
         private readonly Garage20MvcCore22Context _context;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ParkedVehiclesController(Garage20MvcCore22Context context)
+        public ParkedVehiclesController(Garage20MvcCore22Context context, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: ParkedVehicles
@@ -187,7 +191,7 @@ namespace Garage20MvcCore22.Controllers
             if(exitvehicle==null){
                 return NotFound();
             }
-            //exitvehicle.Parked = false;
+            //exitvehicle.Parked = false;  //temporary, uncomment later
           
             var kvitto = new Kvitto();
             kvitto.RegNr = exitvehicle.RegNr;
@@ -205,14 +209,21 @@ namespace Garage20MvcCore22.Controllers
                 + kvitto.EndTime.Hour.ToString() + "_" 
                 + kvitto.EndTime.Minute.ToString() + "_"+ 
                 kvitto.RegNr.ToString();
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//ReceiptsData.dat";
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//ReceiptsData.dat"; NO!
+            //var path = $"~/Receipts/";  //NO!
+            //var path = $"C:/Users/HakanK/source/repos/Garage20MvcCore22/Garage20MvcCore22/Receipts/"; NO!
+
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
+            var path = webRootPath + $"/Receipts/" + $"/{ReceiptsData}.dat";
+
             IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
             formatter.Serialize(stream, kvitto);
             stream.Close();
 
-            //Not working
+            //Not working, why?
             //JsonSerializer serializer = new JsonSerializer();
             //serializer.Converters.Add(new JavaScriptDateTimeConverter());
             //serializer.NullValueHandling = NullValueHandling.Ignore;
@@ -228,7 +239,17 @@ namespace Garage20MvcCore22.Controllers
 
         public async Task<IActionResult> ShowReceipts()
         {
-            //kod visa alla filer med kvitton
+            //show all files with receipts
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
+            var path = webRootPath + $"/Receipts/";
+
+            //Here we read and display all files. Use Async!
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
             return View();
         }
 
