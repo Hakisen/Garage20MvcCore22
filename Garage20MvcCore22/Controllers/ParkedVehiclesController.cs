@@ -265,7 +265,7 @@ namespace Garage20MvcCore22.Controllers
             var path = webRootPath + $"/Receipts/";
 
             IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(path + $"fileName", FileMode.Open, FileAccess.Read);
+            Stream stream = new FileStream(path + $"{fileName}", FileMode.Open, FileAccess.Read);
             Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
 
             if (kvitto == null)
