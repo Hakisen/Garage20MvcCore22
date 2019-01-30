@@ -36,12 +36,7 @@ namespace Garage20MvcCore22.Controllers
             //return View();
         }
 
-        //public async Task<IActionResult> AllVehicles()
-        //{
-        //    return View(await _context.ParkedVehicle.ToListAsync());
-        //}
-
-        public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
+       public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
         {
             var parkedVehicles = await _context.ParkedVehicle.Where(p => p.Parked == true).ToListAsync();
 
@@ -209,13 +204,15 @@ namespace Garage20MvcCore22.Controllers
                 + kvitto.EndTime.Hour.ToString() + "_" 
                 + kvitto.EndTime.Minute.ToString() + "_"+ 
                 kvitto.RegNr.ToString();
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//ReceiptsData.dat"; NO!
-            //var path = $"~/Receipts/";  //NO!
-            //var path = $"C:/Users/HakanK/source/repos/Garage20MvcCore22/Garage20MvcCore22/Receipts/"; NO!
+       
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var contentRootPath = _hostingEnvironment.ContentRootPath; // Not used (HK/MK)
+            string receiptsfolder = "\\Receipts";
+            if(!Directory.Exists(webRootPath + receiptsfolder))
+            {
+                Directory.CreateDirectory(webRootPath + receiptsfolder);
+            }
 
-            var webRootPath = _hostingEnvironment.WebRootPath;  //using IHostingEnvironment dep. injection
-            //var contentRootPath = _hostingEnvironment.ContentRootPath;  //gives the actual path on the server
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"/{ReceiptsData}.dat";
             var path = webRootPath + $"/Receipts/" + $"/{ReceiptsData}.dat";
 
             IFormatter formatter = new BinaryFormatter();
@@ -241,16 +238,20 @@ namespace Garage20MvcCore22.Controllers
         {
             //show all files with receipts
             var webRootPath = _hostingEnvironment.WebRootPath;
-            //var contentRootPath = _hostingEnvironment.ContentRootPath;
-            var path = webRootPath + $"/Receipts/";
+            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            var receiptsPath = webRootPath + $"/Receipts/";
+            int lngth = receiptsPath.Length;
+
+            List<string> filesList = Directory.GetFiles(receiptsPath).Select(p => p.Remove(0, lngth)).ToList();
 
             //List<string> list = Directory.GetFiles(path).Select(p => p.Remove(2, 2)).ToList(); //OK!
             //IEnumerable<string> fileList = array.ToList().Select(p => p.Remove(1, 2));
             //IEnumerable<string> fileList2 = fileList.Select(p => p.Remove(1, 2));
             //fileList = fileList.ToList();
             //Here we read and display all files. Use Async!
+            ViewBag.Message = "Receipts";
 
-            return View();
+            return View(filesList);
         }
 
         public ActionResult ReceiptDetails(string fileName)
