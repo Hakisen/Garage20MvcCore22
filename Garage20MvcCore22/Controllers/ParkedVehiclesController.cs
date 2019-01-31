@@ -234,7 +234,7 @@ namespace Garage20MvcCore22.Controllers
             return View(kvitto);
         }
 
-        public async Task<IActionResult> ShowReceipts()
+        public ActionResult ShowReceipts()
         {
             //show all files with receipts
             var webRootPath = _hostingEnvironment.WebRootPath;
@@ -273,6 +273,7 @@ namespace Garage20MvcCore22.Controllers
                 return NotFound();
             }
 
+            //return NotFound();
             return View(kvitto);
         }
 
