@@ -10,58 +10,69 @@
 <hr />
 
 <p style="color:green">
-    @TempData["Success"]
+    @TempData["CheckedIn"]
 </p>
-<p  class="text-danger">
+<p class="text-danger">
     @TempData["Failure"]
 </p>
+<p>
+    @TempData["Exists"]
+</p>
 
-
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="VehicleType" class="control-label"></label>
-                @*<select asp-for="VehicleType" class="form-control"></select>*@
-                <select asp-for="VehicleType" asp-items="Html.GetEnumSelectList(typeof (VehicleType))"></select>
-                <span asp-validation-for="VehicleType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RegNr" class="control-label"></label>
-                <input asp-for="RegNr" class="form-control" />
-                <span asp-validation-for="RegNr" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NrOfWheels" class="control-label"></label>
-                <input asp-for="NrOfWheels" class="form-control" />
-                <span asp-validation-for="NrOfWheels" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Color" class="control-label"></label>
-                <input asp-for="Color" class="form-control" />
-                <span asp-validation-for="Color" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Brand" class="control-label"></label>
-                <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Check In" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="CheckVehicle" method="get">
+    <p>
+        Search By: @Html.TextBox("regNr")
+        @*@Html.RouteLink()*@
+        <input type="submit" value="Check Reg.Nr." />
+    </p>
+</form>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="CheckIn">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="VehicleType" class="control-label"></label>
+                    @*<select asp-for="VehicleType" class="form-control"></select>*@
+                    <select asp-for="VehicleType" asp-items="Html.GetEnumSelectList(typeof (VehicleType))"></select>
+                    <span asp-validation-for="VehicleType" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RegNr" class="control-label"></label>
+                    @*<a asp-action="CheckVehicle" asp-route-rgnr="@RegNr">Check Vehicle Exist</a>*@
+                    @*<input type="submit" value="Check" class="btn btn-primary" />*@
+                    <input asp-for="RegNr" class="form-control" />
+                    <span asp-validation-for="RegNr" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NrOfWheels" class="control-label"></label>
+                    <input asp-for="NrOfWheels" class="form-control" />
+                    <span asp-validation-for="NrOfWheels" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Color" class="control-label"></label>
+                    <input asp-for="Color" class="form-control" />
+                    <span asp-validation-for="Color" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Model" class="control-label"></label>
+                    <input asp-for="Model" class="form-control" />
+                    <span asp-validation-for="Model" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Brand" class="control-label"></label>
+                    <input asp-for="Brand" class="form-control" />
+                    <span asp-validation-for="Brand" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Check In" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

@@ -36,7 +36,7 @@ namespace Garage20MvcCore22.Controllers
             //return View();
         }
 
-       public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
+        public async Task<IActionResult> ParkedVehicles(string sortOrder, string SearchString)
         {
             var parkedVehicles = await _context.ParkedVehicle.Where(p => p.Parked == true).ToListAsync();
 
@@ -106,11 +106,11 @@ namespace Garage20MvcCore22.Controllers
             }
             return View(vehicles.ToList());
 
-            }
+        }
 
 
-            // GET: ParkedVehicles/Details/5
-            public async Task<IActionResult> Details(int? id)
+        // GET: ParkedVehicles/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -140,22 +140,69 @@ namespace Garage20MvcCore22.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("Id,VehicleType,RegNr,NrOfWheels,Color,Model,Brand,StartTime,Parked")] ParkedVehicle parkedVehicle)
         {
+            //parkedVehicle.RegNr = parkedVehicle.RegNr.ToUpper();
+            //var vehicle = await _context.ParkedVehicle.FirstOrDefaultAsync(p => p.RegNr == parkedVehicle.RegNr);
+            //if ( vehicle != null)
+            //{
+            //    return View(vehicle);
+            //}
             if (ModelState.IsValid)
             {
-                parkedVehicle.RegNr.ToUpper();
-                parkedVehicle.StartTime = DateTime.Now;
-                parkedVehicle.Parked = true;
-                _context.Add(parkedVehicle);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "CheckIn Is Done Successfully!";
-               return RedirectToAction(nameof(Index));
-            }
-            else{
-                TempData["Failure"] = "CheckIn Can not be Done!";
 
+                //parkedVehicle.StartTime = DateTime.Now;
+                //parkedVehicle.Parked = true;
+
+                var vehicle = await _context.ParkedVehicle.AsNoTracking().FirstOrDefaultAsync(p => p.RegNr == parkedVehicle.RegNr);
+                //parkedVehicle.RegNr.ToUpper();
+                if (vehicle == null)
+                {
+                    parkedVehicle.RegNr = parkedVehicle.RegNr.ToUpper();
+                    parkedVehicle.StartTime = DateTime.Now;
+                    parkedVehicle.Parked = true;
+                    _context.Add(parkedVehicle);
+                    await _context.SaveChangesAsync();
+                    TempData["CheckedIn"] = "CheckIn Is Done Successfully!";
+                }
+                else
+                {
+                    if (vehicle.Parked != true)
+                    {
+                        vehicle.StartTime = DateTime.Now;
+                        vehicle.Parked = true;
+                        _context.Update(vehicle);
+                        await _context.SaveChangesAsync();
+                        TempData["CheckedIn"] = "CheckIn Is Done Successfully!";
+                    }
+                    else
+                    {
+                        TempData["AlreadyCheckedIn"] = "Vehicle is already parked in the Garage!";
+                    }
+                }
+                return RedirectToAction(nameof(ParkedVehicles));
             }
-           
+            else
+            {
+                TempData["Failure"] = "CheckIn Can not be Done!";
+            }
+
             return View(parkedVehicle);
+        }
+
+        public async Task<IActionResult> CheckVehicle(string regNr)
+        {
+            var regNr2 = regNr.ToUpper();
+            var vehicle = await _context.ParkedVehicle.FirstOrDefaultAsync(p => p.RegNr == regNr2);
+
+            if (vehicle != null)
+            {
+                return View("CheckIn", vehicle);
+            }
+
+            else
+            {
+                TempData["Exists"] = "Vehicle doesn't exist!";
+                return RedirectToAction("CheckIn");
+            }
         }
 
         [HttpGet]
@@ -178,37 +225,39 @@ namespace Garage20MvcCore22.Controllers
 
         public ActionResult Receipt(int? id)
         {
-            if(id==null){
+            if (id == null)
+            {
                 return NotFound();
             }
-        
+
             var exitvehicle = _context.ParkedVehicle.FirstOrDefault(v => v.Id == id);
-            if(exitvehicle==null){
+            if (exitvehicle == null)
+            {
                 return NotFound();
             }
-            //exitvehicle.Parked = false;  //temporary, uncomment later
-          
+            exitvehicle.Parked = false;  //temporary, uncomment later
+
             var kvitto = new Kvitto();
             kvitto.RegNr = exitvehicle.RegNr;
             kvitto.StartTime = exitvehicle.StartTime;
             kvitto.EndTime = DateTime.Now;
             var between = kvitto.EndTime.Subtract(kvitto.StartTime);
-            kvitto.Duration=string.Format("{0} dagar,{1} timmar,{2} minuter", between.Days, between.Hours, between.Minutes);
-            kvitto.TotalPrice = Math.Floor(between.TotalMinutes * 0.7 );
+            kvitto.Duration = string.Format("{0} dagar,{1} timmar,{2} minuter", between.Days, between.Hours, between.Minutes);
+            kvitto.TotalPrice = Math.Floor(between.TotalMinutes * 0.7);
 
             _context.SaveChangesAsync();
 
-            string ReceiptsData = kvitto.EndTime.Year.ToString() + "_" 
-                + (kvitto.EndTime.Month < 10 ? "0" : "") + kvitto.EndTime.Month.ToString() + "_" 
-                + kvitto.EndTime.Day.ToString() + "_" 
-                + kvitto.EndTime.Hour.ToString() + "_" 
-                + kvitto.EndTime.Minute.ToString() + "_"+ 
+            string ReceiptsData = kvitto.EndTime.Year.ToString() + "_"
+                + (kvitto.EndTime.Month < 10 ? "0" : "") + kvitto.EndTime.Month.ToString() + "_"
+                + kvitto.EndTime.Day.ToString() + "_"
+                + kvitto.EndTime.Hour.ToString() + "_"
+                + kvitto.EndTime.Minute.ToString() + "_" +
                 kvitto.RegNr.ToString();
-       
+
             var webRootPath = _hostingEnvironment.WebRootPath;
             var contentRootPath = _hostingEnvironment.ContentRootPath; // Not used (HK/MK)
             string receiptsfolder = "\\Receipts";
-            if(!Directory.Exists(webRootPath + receiptsfolder))
+            if (!Directory.Exists(webRootPath + receiptsfolder))
             {
                 Directory.CreateDirectory(webRootPath + receiptsfolder);
             }
@@ -238,7 +287,7 @@ namespace Garage20MvcCore22.Controllers
         {
             //show all files with receipts
             var webRootPath = _hostingEnvironment.WebRootPath;
-            var contentRootPath = _hostingEnvironment.ContentRootPath;
+            var contentRootPath = _hostingEnvironment.ContentRootPath;  //Not used now.
             var receiptsPath = webRootPath + $"/Receipts/";
             int lngth = receiptsPath.Length;
 
@@ -267,6 +316,7 @@ namespace Garage20MvcCore22.Controllers
             IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream(path + $"{fileName}", FileMode.Open, FileAccess.Read);
             Kvitto kvitto = (Kvitto)formatter.Deserialize(stream);
+            stream.Close();
 
             if (kvitto == null)
             {
@@ -372,7 +422,7 @@ namespace Garage20MvcCore22.Controllers
         {
             if (id != parkedVehicle.Id)
             {
-                TempData["Failure"]="Vehicle With This Id Does Not Exist!";
+                TempData["Failure"] = "Vehicle With This Id Does Not Exist!";
                 return NotFound();
             }
 
@@ -383,7 +433,7 @@ namespace Garage20MvcCore22.Controllers
                 parkedVehicle.StartTime = editVehicle.StartTime;
                 try
                 {
-                  
+
                     _context.Update(parkedVehicle);
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Edit IS Done Successfully!";
@@ -402,9 +452,11 @@ namespace Garage20MvcCore22.Controllers
                     }
                 }
 
-              
+
                 return RedirectToAction(nameof(Index));
-            }else{
+            }
+            else
+            {
                 TempData["Failure"] = "Edit Could not be Done!";
             }
             return View(parkedVehicle);
@@ -422,11 +474,11 @@ namespace Garage20MvcCore22.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkedVehicle == null)
             {
-               
+
                 return NotFound();
             }
 
-    
+
             return View(parkedVehicle);
         }
 

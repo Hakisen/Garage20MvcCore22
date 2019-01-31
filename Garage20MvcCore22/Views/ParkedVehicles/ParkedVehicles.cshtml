@@ -4,6 +4,12 @@
     ViewData["Title"] = "ParkedVehicles";
 }
 <h1>Parked Vehicles</h1>
+<p style="color:green">
+    @TempData["CheckedIn"]
+</p>
+<p class="text-danger">
+    @TempData["AlreadyCheckedIn"]
+</p>
 <p>
     <a asp-action="CheckIn">Check In</a>
 </p>

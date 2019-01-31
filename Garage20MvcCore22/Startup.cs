@@ -64,7 +64,7 @@ namespace Garage20MvcCore22
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=ParkedVehicles}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
