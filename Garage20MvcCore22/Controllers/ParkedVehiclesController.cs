@@ -19,6 +19,7 @@ namespace Garage20MvcCore22.Controllers
 {
     public class ParkedVehiclesController : Controller
     {
+
         private readonly Garage20MvcCore22Context _context;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -140,6 +141,13 @@ namespace Garage20MvcCore22.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("Id,VehicleType,RegNr,NrOfWheels,Color,Model,Brand,StartTime,Parked")] ParkedVehicle parkedVehicle)
         {
+            var vehicles = _context.ParkedVehicle.FirstOrDefault(p => p.RegNr == parkedVehicle.RegNr);
+            if (vehicles!=null)
+            {
+              
+              
+
+            }
             if (ModelState.IsValid)
             {
                 parkedVehicle.RegNr.ToUpper();
